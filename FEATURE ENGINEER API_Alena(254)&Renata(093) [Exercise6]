@@ -1,0 +1,2482 @@
+{
+ "cells": [
+  {
+   "cell_type": "markdown",
+   "id": "1cb01509",
+   "metadata": {},
+   "source": [
+    "### EXERCISE 5 FEATURE ENGINEER API BY ALENA(254) & RENATA(093)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 13,
+   "id": "3ae70ab1",
+   "metadata": {},
+   "outputs": [],
+   "source": [
+    "texts = ['Cuti Bersama Idul Fitri', 'Cuti Bersama Idul Fitri', 'Cuti Bersama Idul Fitri', 'Cuti Bersama Idul Fitri',\n",
+    "         'Hari Idul Fitri', 'Cuti Bersama Idul Fitri', 'Idul Adha (Lebaran Haji)', 'Cuti Bersama Idul Fitri',\n",
+    "         'Idul Adha (Lebaran Haji)', 'Cuti Bersama Idul Fitri', 'Hari Idul Fitri', 'Cuti Bersama Idul Fitri',\n",
+    "         'Hari Idul Fitri', 'Cuti Bersama Idul Fitri', 'Hari Idul Fitri']\n",
+    "\n",
+    "hasil_preprocess = {\n",
+    "    'Cuti Bersama Idul Fitri':  ['cuti', 'idul', 'fitri'],\n",
+    "    'Hari Idul Fitri':          ['idul', 'fitri'],\n",
+    "    'Idul Adha (Lebaran Haji)': ['idul', 'adha', 'lebaran', 'haji'],\n",
+    "}\n",
+    "preprocessed = [hasil_preprocess[t] for t in texts]"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 17,
+   "id": "1dc11d1a",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/plain": [
+       "0            cuti idul fitri\n",
+       "1            cuti idul fitri\n",
+       "2            cuti idul fitri\n",
+       "3            cuti idul fitri\n",
+       "4                 idul fitri\n",
+       "5            cuti idul fitri\n",
+       "6     idul adha lebaran haji\n",
+       "7            cuti idul fitri\n",
+       "8     idul adha lebaran haji\n",
+       "9            cuti idul fitri\n",
+       "10                idul fitri\n",
+       "11           cuti idul fitri\n",
+       "12                idul fitri\n",
+       "13           cuti idul fitri\n",
+       "14                idul fitri\n",
+       "Name: preprocessed, dtype: object"
+      ]
+     },
+     "execution_count": 17,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "# df sudah ada dari Exercise 4\n",
+    "df['preprocessed'] = df['prepro'].apply(\n",
+    "    lambda tokens: ' '.join(tokens) if isinstance(tokens, list) else tokens\n",
+    ")\n",
+    "df_pre = df['preprocessed']\n",
+    "df_pre"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 18,
+   "id": "fcc514f6",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>adha</th>\n",
+       "      <th>cuti</th>\n",
+       "      <th>fitri</th>\n",
+       "      <th>haji</th>\n",
+       "      <th>idul</th>\n",
+       "      <th>lebaran</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>0</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "      <td>1</td>\n",
+       "      <td>0</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "    adha  cuti  fitri  haji  idul  lebaran\n",
+       "0      0     1      1     0     1        0\n",
+       "1      0     1      1     0     1        0\n",
+       "2      0     1      1     0     1        0\n",
+       "3      0     1      1     0     1        0\n",
+       "4      0     0      1     0     1        0\n",
+       "5      0     1      1     0     1        0\n",
+       "6      1     0      0     1     1        1\n",
+       "7      0     1      1     0     1        0\n",
+       "8      1     0      0     1     1        1\n",
+       "9      0     1      1     0     1        0\n",
+       "10     0     0      1     0     1        0\n",
+       "11     0     1      1     0     1        0\n",
+       "12     0     0      1     0     1        0\n",
+       "13     0     1      1     0     1        0\n",
+       "14     0     0      1     0     1        0"
+      ]
+     },
+     "execution_count": 18,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.feature_extraction.text import CountVectorizer\n",
+    "\n",
+    "vectorizer = CountVectorizer(binary=True)\n",
+    "X = vectorizer.fit_transform(df_pre)\n",
+    "df_FE_ohe = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())\n",
+    "df_FE_ohe"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 19,
+   "id": "a9c2ac37",
+   "metadata": {},
+   "outputs": [
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>adha</th>\n",
+       "      <th>cuti</th>\n",
+       "      <th>fitri</th>\n",
+       "      <th>haji</th>\n",
+       "      <th>idul</th>\n",
+       "      <th>lebaran</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.749895</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.661557</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>0.564345</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.564345</td>\n",
+       "      <td>0.211051</td>\n",
+       "      <td>0.564345</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>0.564345</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.564345</td>\n",
+       "      <td>0.211051</td>\n",
+       "      <td>0.564345</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.749895</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.661557</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.749895</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.661557</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.697177</td>\n",
+       "      <td>0.537599</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.474269</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.749895</td>\n",
+       "      <td>0.000000</td>\n",
+       "      <td>0.661557</td>\n",
+       "      <td>0.000000</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "        adha      cuti     fitri      haji      idul   lebaran\n",
+       "0   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "1   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "2   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "3   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "4   0.000000  0.000000  0.749895  0.000000  0.661557  0.000000\n",
+       "5   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "6   0.564345  0.000000  0.000000  0.564345  0.211051  0.564345\n",
+       "7   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "8   0.564345  0.000000  0.000000  0.564345  0.211051  0.564345\n",
+       "9   0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "10  0.000000  0.000000  0.749895  0.000000  0.661557  0.000000\n",
+       "11  0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "12  0.000000  0.000000  0.749895  0.000000  0.661557  0.000000\n",
+       "13  0.000000  0.697177  0.537599  0.000000  0.474269  0.000000\n",
+       "14  0.000000  0.000000  0.749895  0.000000  0.661557  0.000000"
+      ]
+     },
+     "execution_count": 19,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "from sklearn.feature_extraction.text import TfidfVectorizer\n",
+    "\n",
+    "vectorizer = TfidfVectorizer()\n",
+    "X = vectorizer.fit_transform(df_pre)\n",
+    "df_FE_tfidf = pd.DataFrame(X.toarray(), columns=vectorizer.get_feature_names_out())\n",
+    "df_FE_tfidf"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 20,
+   "id": "5c348e45",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "[nltk_data] Downloading package punkt to\n",
+      "[nltk_data]     C:\\Users\\alena\\AppData\\Roaming\\nltk_data...\n",
+      "[nltk_data]   Package punkt is already up-to-date!\n",
+      "[nltk_data] Downloading package punkt_tab to\n",
+      "[nltk_data]     C:\\Users\\alena\\AppData\\Roaming\\nltk_data...\n",
+      "[nltk_data]   Package punkt_tab is already up-to-date!\n",
+      "100%|██████████| 15/15 [00:00<00:00, 122.02it/s]\n"
+     ]
+    },
+    {
+     "data": {
+      "text/plain": [
+       "[['cuti', 'idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'adha', 'lebaran', 'haji'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'adha', 'lebaran', 'haji'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'fitri'],\n",
+       " ['cuti', 'idul', 'fitri'],\n",
+       " ['idul', 'fitri']]"
+      ]
+     },
+     "execution_count": 20,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import nltk\n",
+    "nltk.download('punkt')\n",
+    "nltk.download('punkt_tab')\n",
+    "from nltk import word_tokenize\n",
+    "from tqdm import tqdm\n",
+    "\n",
+    "sentences = [word_tokenize(t.lower()) for t in tqdm(df_pre)]\n",
+    "sentences"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 21,
+   "id": "c6558b9f",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['idul', 'fitri', 'cuti', 'haji', 'lebaran', 'adha']\n",
+      "(6, 100) 100\n",
+      "[('fitri', -0.010839174501597881), ('lebaran', -0.02775035798549652), ('cuti', -0.051958419382572174), ('adha', -0.05987629294395447), ('haji', -0.1116705909371376)]\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "      <th>4</th>\n",
+       "      <th>5</th>\n",
+       "      <th>6</th>\n",
+       "      <th>7</th>\n",
+       "      <th>8</th>\n",
+       "      <th>9</th>\n",
+       "      <th>...</th>\n",
+       "      <th>90</th>\n",
+       "      <th>91</th>\n",
+       "      <th>92</th>\n",
+       "      <th>93</th>\n",
+       "      <th>94</th>\n",
+       "      <th>95</th>\n",
+       "      <th>96</th>\n",
+       "      <th>97</th>\n",
+       "      <th>98</th>\n",
+       "      <th>99</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>-0.004578</td>\n",
+       "      <td>0.001951</td>\n",
+       "      <td>0.005147</td>\n",
+       "      <td>0.007376</td>\n",
+       "      <td>-0.000919</td>\n",
+       "      <td>-0.006643</td>\n",
+       "      <td>0.003783</td>\n",
+       "      <td>0.007511</td>\n",
+       "      <td>-0.003928</td>\n",
+       "      <td>-0.004969</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001360</td>\n",
+       "      <td>-0.000693</td>\n",
+       "      <td>0.002835</td>\n",
+       "      <td>-0.003832</td>\n",
+       "      <td>0.003452</td>\n",
+       "      <td>0.003862</td>\n",
+       "      <td>-0.001786</td>\n",
+       "      <td>-0.004717</td>\n",
+       "      <td>-0.004304</td>\n",
+       "      <td>0.005450</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-0.006161</td>\n",
+       "      <td>0.003227</td>\n",
+       "      <td>-0.000786</td>\n",
+       "      <td>-0.001130</td>\n",
+       "      <td>-0.002602</td>\n",
+       "      <td>-0.001698</td>\n",
+       "      <td>0.003708</td>\n",
+       "      <td>0.005430</td>\n",
+       "      <td>-0.002390</td>\n",
+       "      <td>-0.002731</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001603</td>\n",
+       "      <td>0.000838</td>\n",
+       "      <td>-0.000062</td>\n",
+       "      <td>-0.002398</td>\n",
+       "      <td>0.007958</td>\n",
+       "      <td>0.000415</td>\n",
+       "      <td>0.000394</td>\n",
+       "      <td>-0.004591</td>\n",
+       "      <td>0.000536</td>\n",
+       "      <td>-0.000705</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>-0.006161</td>\n",
+       "      <td>0.003227</td>\n",
+       "      <td>-0.000786</td>\n",
+       "      <td>-0.001130</td>\n",
+       "      <td>-0.002602</td>\n",
+       "      <td>-0.001698</td>\n",
+       "      <td>0.003708</td>\n",
+       "      <td>0.005430</td>\n",
+       "      <td>-0.002390</td>\n",
+       "      <td>-0.002731</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001603</td>\n",
+       "      <td>0.000838</td>\n",
+       "      <td>-0.000062</td>\n",
+       "      <td>-0.002398</td>\n",
+       "      <td>0.007958</td>\n",
+       "      <td>0.000415</td>\n",
+       "      <td>0.000394</td>\n",
+       "      <td>-0.004591</td>\n",
+       "      <td>0.000536</td>\n",
+       "      <td>-0.000705</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>-0.004578</td>\n",
+       "      <td>0.001951</td>\n",
+       "      <td>0.005147</td>\n",
+       "      <td>0.007376</td>\n",
+       "      <td>-0.000919</td>\n",
+       "      <td>-0.006643</td>\n",
+       "      <td>0.003783</td>\n",
+       "      <td>0.007511</td>\n",
+       "      <td>-0.003928</td>\n",
+       "      <td>-0.004969</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001360</td>\n",
+       "      <td>-0.000693</td>\n",
+       "      <td>0.002835</td>\n",
+       "      <td>-0.003832</td>\n",
+       "      <td>0.003452</td>\n",
+       "      <td>0.003862</td>\n",
+       "      <td>-0.001786</td>\n",
+       "      <td>-0.004717</td>\n",
+       "      <td>-0.004304</td>\n",
+       "      <td>0.005450</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>-0.004578</td>\n",
+       "      <td>0.001951</td>\n",
+       "      <td>0.005147</td>\n",
+       "      <td>0.007376</td>\n",
+       "      <td>-0.000919</td>\n",
+       "      <td>-0.006643</td>\n",
+       "      <td>0.003783</td>\n",
+       "      <td>0.007511</td>\n",
+       "      <td>-0.003928</td>\n",
+       "      <td>-0.004969</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001360</td>\n",
+       "      <td>-0.000693</td>\n",
+       "      <td>0.002835</td>\n",
+       "      <td>-0.003832</td>\n",
+       "      <td>0.003452</td>\n",
+       "      <td>0.003862</td>\n",
+       "      <td>-0.001786</td>\n",
+       "      <td>-0.004717</td>\n",
+       "      <td>-0.004304</td>\n",
+       "      <td>0.005450</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>-0.003021</td>\n",
+       "      <td>0.002327</td>\n",
+       "      <td>0.001161</td>\n",
+       "      <td>0.004460</td>\n",
+       "      <td>0.001943</td>\n",
+       "      <td>-0.001980</td>\n",
+       "      <td>0.001298</td>\n",
+       "      <td>0.005889</td>\n",
+       "      <td>-0.005392</td>\n",
+       "      <td>-0.001244</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000597</td>\n",
+       "      <td>0.001439</td>\n",
+       "      <td>0.004951</td>\n",
+       "      <td>-0.003921</td>\n",
+       "      <td>0.004958</td>\n",
+       "      <td>0.004368</td>\n",
+       "      <td>0.000768</td>\n",
+       "      <td>-0.002975</td>\n",
+       "      <td>-0.000131</td>\n",
+       "      <td>0.001294</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>-0.004578</td>\n",
+       "      <td>0.001951</td>\n",
+       "      <td>0.005147</td>\n",
+       "      <td>0.007376</td>\n",
+       "      <td>-0.000919</td>\n",
+       "      <td>-0.006643</td>\n",
+       "      <td>0.003783</td>\n",
+       "      <td>0.007511</td>\n",
+       "      <td>-0.003928</td>\n",
+       "      <td>-0.004969</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001360</td>\n",
+       "      <td>-0.000693</td>\n",
+       "      <td>0.002835</td>\n",
+       "      <td>-0.003832</td>\n",
+       "      <td>0.003452</td>\n",
+       "      <td>0.003862</td>\n",
+       "      <td>-0.001786</td>\n",
+       "      <td>-0.004717</td>\n",
+       "      <td>-0.004304</td>\n",
+       "      <td>0.005450</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>15 rows × 100 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0         1         2         3         4         5         6   \\\n",
+       "0  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "1  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "2  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "3  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "4  -0.004578  0.001951  0.005147  0.007376 -0.000919 -0.006643  0.003783   \n",
+       "5  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "6  -0.006161  0.003227 -0.000786 -0.001130 -0.002602 -0.001698  0.003708   \n",
+       "7  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "8  -0.006161  0.003227 -0.000786 -0.001130 -0.002602 -0.001698  0.003708   \n",
+       "9  -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "10 -0.004578  0.001951  0.005147  0.007376 -0.000919 -0.006643  0.003783   \n",
+       "11 -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "12 -0.004578  0.001951  0.005147  0.007376 -0.000919 -0.006643  0.003783   \n",
+       "13 -0.003021  0.002327  0.001161  0.004460  0.001943 -0.001980  0.001298   \n",
+       "14 -0.004578  0.001951  0.005147  0.007376 -0.000919 -0.006643  0.003783   \n",
+       "\n",
+       "          7         8         9   ...        90        91        92        93  \\\n",
+       "0   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "1   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "2   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "3   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "4   0.007511 -0.003928 -0.004969  ...  0.001360 -0.000693  0.002835 -0.003832   \n",
+       "5   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "6   0.005430 -0.002390 -0.002731  ...  0.001603  0.000838 -0.000062 -0.002398   \n",
+       "7   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "8   0.005430 -0.002390 -0.002731  ...  0.001603  0.000838 -0.000062 -0.002398   \n",
+       "9   0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "10  0.007511 -0.003928 -0.004969  ...  0.001360 -0.000693  0.002835 -0.003832   \n",
+       "11  0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "12  0.007511 -0.003928 -0.004969  ...  0.001360 -0.000693  0.002835 -0.003832   \n",
+       "13  0.005889 -0.005392 -0.001244  ... -0.000597  0.001439  0.004951 -0.003921   \n",
+       "14  0.007511 -0.003928 -0.004969  ...  0.001360 -0.000693  0.002835 -0.003832   \n",
+       "\n",
+       "          94        95        96        97        98        99  \n",
+       "0   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "1   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "2   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "3   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "4   0.003452  0.003862 -0.001786 -0.004717 -0.004304  0.005450  \n",
+       "5   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "6   0.007958  0.000415  0.000394 -0.004591  0.000536 -0.000705  \n",
+       "7   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "8   0.007958  0.000415  0.000394 -0.004591  0.000536 -0.000705  \n",
+       "9   0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "10  0.003452  0.003862 -0.001786 -0.004717 -0.004304  0.005450  \n",
+       "11  0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "12  0.003452  0.003862 -0.001786 -0.004717 -0.004304  0.005450  \n",
+       "13  0.004958  0.004368  0.000768 -0.002975 -0.000131  0.001294  \n",
+       "14  0.003452  0.003862 -0.001786 -0.004717 -0.004304  0.005450  \n",
+       "\n",
+       "[15 rows x 100 columns]"
+      ]
+     },
+     "execution_count": 21,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "import gensim.models\n",
+    "\n",
+    "model = gensim.models.Word2Vec(sentences, min_count=1, vector_size=100, window=5, sg=0)\n",
+    "model.save('kalender_libur.w2v')\n",
+    "model = gensim.models.Word2Vec.load('kalender_libur.w2v')\n",
+    "\n",
+    "w2v = model.wv\n",
+    "print(w2v.index_to_key)              # seluruh vocab (cuma 6 kata)\n",
+    "print(w2v.vectors.shape, w2v.vector_size)\n",
+    "print(w2v.similar_by_key('idul'))    # kata paling mirip dengan 'idul'\n",
+    "\n",
+    "import numpy as np\n",
+    "def get_document_vector(tokens, model):\n",
+    "    valid_vectors = [model.wv[w] for w in tokens if w in model.wv]\n",
+    "    return np.mean(valid_vectors, axis=0)\n",
+    "\n",
+    "X_features = np.array([get_document_vector(doc, model) for doc in sentences])\n",
+    "pd.DataFrame(X_features)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 28,
+   "id": "714a7962",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "[notice] A new release of pip is available: 25.2 -> 26.2.1\n",
+      "[notice] To update, run: python.exe -m pip install --upgrade pip\n"
+     ]
+    }
+   ],
+   "source": [
+    "!pip install gensim -q"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 30,
+   "id": "81dccb1a",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stdout",
+     "output_type": "stream",
+     "text": [
+      "['idul', 'fitri', 'cuti', 'haji', 'lebaran', 'adha']\n",
+      "(6, 100)\n",
+      "[('fitri', 0.0855768471956253), ('cuti', 0.00916230771690607), ('haji', -0.030660511925816536), ('adha', -0.03496657311916351), ('lebaran', -0.08940248936414719)]\n"
+     ]
+    },
+    {
+     "data": {
+      "text/html": [
+       "<div>\n",
+       "<style scoped>\n",
+       "    .dataframe tbody tr th:only-of-type {\n",
+       "        vertical-align: middle;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe tbody tr th {\n",
+       "        vertical-align: top;\n",
+       "    }\n",
+       "\n",
+       "    .dataframe thead th {\n",
+       "        text-align: right;\n",
+       "    }\n",
+       "</style>\n",
+       "<table border=\"1\" class=\"dataframe\">\n",
+       "  <thead>\n",
+       "    <tr style=\"text-align: right;\">\n",
+       "      <th></th>\n",
+       "      <th>0</th>\n",
+       "      <th>1</th>\n",
+       "      <th>2</th>\n",
+       "      <th>3</th>\n",
+       "      <th>4</th>\n",
+       "      <th>5</th>\n",
+       "      <th>6</th>\n",
+       "      <th>7</th>\n",
+       "      <th>8</th>\n",
+       "      <th>9</th>\n",
+       "      <th>...</th>\n",
+       "      <th>90</th>\n",
+       "      <th>91</th>\n",
+       "      <th>92</th>\n",
+       "      <th>93</th>\n",
+       "      <th>94</th>\n",
+       "      <th>95</th>\n",
+       "      <th>96</th>\n",
+       "      <th>97</th>\n",
+       "      <th>98</th>\n",
+       "      <th>99</th>\n",
+       "    </tr>\n",
+       "  </thead>\n",
+       "  <tbody>\n",
+       "    <tr>\n",
+       "      <th>0</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>1</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>2</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>3</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>4</th>\n",
+       "      <td>0.000434</td>\n",
+       "      <td>0.002183</td>\n",
+       "      <td>-0.000077</td>\n",
+       "      <td>-0.000807</td>\n",
+       "      <td>0.000228</td>\n",
+       "      <td>-0.001485</td>\n",
+       "      <td>-0.000781</td>\n",
+       "      <td>0.001589</td>\n",
+       "      <td>0.000957</td>\n",
+       "      <td>-0.000179</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000704</td>\n",
+       "      <td>0.000695</td>\n",
+       "      <td>-0.001405</td>\n",
+       "      <td>-0.001452</td>\n",
+       "      <td>0.000550</td>\n",
+       "      <td>0.000566</td>\n",
+       "      <td>-0.000483</td>\n",
+       "      <td>0.000996</td>\n",
+       "      <td>-0.000238</td>\n",
+       "      <td>-0.000483</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>5</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>6</th>\n",
+       "      <td>-0.000079</td>\n",
+       "      <td>-0.000144</td>\n",
+       "      <td>-0.001028</td>\n",
+       "      <td>-0.001787</td>\n",
+       "      <td>-0.000225</td>\n",
+       "      <td>-0.000140</td>\n",
+       "      <td>-0.000579</td>\n",
+       "      <td>0.001721</td>\n",
+       "      <td>0.000042</td>\n",
+       "      <td>-0.001008</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000214</td>\n",
+       "      <td>0.000196</td>\n",
+       "      <td>-0.000654</td>\n",
+       "      <td>-0.001313</td>\n",
+       "      <td>0.000148</td>\n",
+       "      <td>0.001278</td>\n",
+       "      <td>-0.000180</td>\n",
+       "      <td>-0.000994</td>\n",
+       "      <td>-0.000649</td>\n",
+       "      <td>0.000605</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>7</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>8</th>\n",
+       "      <td>-0.000079</td>\n",
+       "      <td>-0.000144</td>\n",
+       "      <td>-0.001028</td>\n",
+       "      <td>-0.001787</td>\n",
+       "      <td>-0.000225</td>\n",
+       "      <td>-0.000140</td>\n",
+       "      <td>-0.000579</td>\n",
+       "      <td>0.001721</td>\n",
+       "      <td>0.000042</td>\n",
+       "      <td>-0.001008</td>\n",
+       "      <td>...</td>\n",
+       "      <td>-0.000214</td>\n",
+       "      <td>0.000196</td>\n",
+       "      <td>-0.000654</td>\n",
+       "      <td>-0.001313</td>\n",
+       "      <td>0.000148</td>\n",
+       "      <td>0.001278</td>\n",
+       "      <td>-0.000180</td>\n",
+       "      <td>-0.000994</td>\n",
+       "      <td>-0.000649</td>\n",
+       "      <td>0.000605</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>9</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>10</th>\n",
+       "      <td>0.000434</td>\n",
+       "      <td>0.002183</td>\n",
+       "      <td>-0.000077</td>\n",
+       "      <td>-0.000807</td>\n",
+       "      <td>0.000228</td>\n",
+       "      <td>-0.001485</td>\n",
+       "      <td>-0.000781</td>\n",
+       "      <td>0.001589</td>\n",
+       "      <td>0.000957</td>\n",
+       "      <td>-0.000179</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000704</td>\n",
+       "      <td>0.000695</td>\n",
+       "      <td>-0.001405</td>\n",
+       "      <td>-0.001452</td>\n",
+       "      <td>0.000550</td>\n",
+       "      <td>0.000566</td>\n",
+       "      <td>-0.000483</td>\n",
+       "      <td>0.000996</td>\n",
+       "      <td>-0.000238</td>\n",
+       "      <td>-0.000483</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>11</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>12</th>\n",
+       "      <td>0.000434</td>\n",
+       "      <td>0.002183</td>\n",
+       "      <td>-0.000077</td>\n",
+       "      <td>-0.000807</td>\n",
+       "      <td>0.000228</td>\n",
+       "      <td>-0.001485</td>\n",
+       "      <td>-0.000781</td>\n",
+       "      <td>0.001589</td>\n",
+       "      <td>0.000957</td>\n",
+       "      <td>-0.000179</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000704</td>\n",
+       "      <td>0.000695</td>\n",
+       "      <td>-0.001405</td>\n",
+       "      <td>-0.001452</td>\n",
+       "      <td>0.000550</td>\n",
+       "      <td>0.000566</td>\n",
+       "      <td>-0.000483</td>\n",
+       "      <td>0.000996</td>\n",
+       "      <td>-0.000238</td>\n",
+       "      <td>-0.000483</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>13</th>\n",
+       "      <td>-0.000189</td>\n",
+       "      <td>0.001341</td>\n",
+       "      <td>0.000021</td>\n",
+       "      <td>0.000264</td>\n",
+       "      <td>0.000508</td>\n",
+       "      <td>-0.000356</td>\n",
+       "      <td>-0.000528</td>\n",
+       "      <td>0.000411</td>\n",
+       "      <td>0.000064</td>\n",
+       "      <td>0.000537</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.001647</td>\n",
+       "      <td>0.000568</td>\n",
+       "      <td>-0.001116</td>\n",
+       "      <td>-0.001502</td>\n",
+       "      <td>-0.000022</td>\n",
+       "      <td>0.000610</td>\n",
+       "      <td>-0.000278</td>\n",
+       "      <td>0.001434</td>\n",
+       "      <td>0.000241</td>\n",
+       "      <td>-0.000719</td>\n",
+       "    </tr>\n",
+       "    <tr>\n",
+       "      <th>14</th>\n",
+       "      <td>0.000434</td>\n",
+       "      <td>0.002183</td>\n",
+       "      <td>-0.000077</td>\n",
+       "      <td>-0.000807</td>\n",
+       "      <td>0.000228</td>\n",
+       "      <td>-0.001485</td>\n",
+       "      <td>-0.000781</td>\n",
+       "      <td>0.001589</td>\n",
+       "      <td>0.000957</td>\n",
+       "      <td>-0.000179</td>\n",
+       "      <td>...</td>\n",
+       "      <td>0.000704</td>\n",
+       "      <td>0.000695</td>\n",
+       "      <td>-0.001405</td>\n",
+       "      <td>-0.001452</td>\n",
+       "      <td>0.000550</td>\n",
+       "      <td>0.000566</td>\n",
+       "      <td>-0.000483</td>\n",
+       "      <td>0.000996</td>\n",
+       "      <td>-0.000238</td>\n",
+       "      <td>-0.000483</td>\n",
+       "    </tr>\n",
+       "  </tbody>\n",
+       "</table>\n",
+       "<p>15 rows × 100 columns</p>\n",
+       "</div>"
+      ],
+      "text/plain": [
+       "          0         1         2         3         4         5         6   \\\n",
+       "0  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "1  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "2  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "3  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "4   0.000434  0.002183 -0.000077 -0.000807  0.000228 -0.001485 -0.000781   \n",
+       "5  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "6  -0.000079 -0.000144 -0.001028 -0.001787 -0.000225 -0.000140 -0.000579   \n",
+       "7  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "8  -0.000079 -0.000144 -0.001028 -0.001787 -0.000225 -0.000140 -0.000579   \n",
+       "9  -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "10  0.000434  0.002183 -0.000077 -0.000807  0.000228 -0.001485 -0.000781   \n",
+       "11 -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "12  0.000434  0.002183 -0.000077 -0.000807  0.000228 -0.001485 -0.000781   \n",
+       "13 -0.000189  0.001341  0.000021  0.000264  0.000508 -0.000356 -0.000528   \n",
+       "14  0.000434  0.002183 -0.000077 -0.000807  0.000228 -0.001485 -0.000781   \n",
+       "\n",
+       "          7         8         9   ...        90        91        92        93  \\\n",
+       "0   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "1   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "2   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "3   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "4   0.001589  0.000957 -0.000179  ...  0.000704  0.000695 -0.001405 -0.001452   \n",
+       "5   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "6   0.001721  0.000042 -0.001008  ... -0.000214  0.000196 -0.000654 -0.001313   \n",
+       "7   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "8   0.001721  0.000042 -0.001008  ... -0.000214  0.000196 -0.000654 -0.001313   \n",
+       "9   0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "10  0.001589  0.000957 -0.000179  ...  0.000704  0.000695 -0.001405 -0.001452   \n",
+       "11  0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "12  0.001589  0.000957 -0.000179  ...  0.000704  0.000695 -0.001405 -0.001452   \n",
+       "13  0.000411  0.000064  0.000537  ...  0.001647  0.000568 -0.001116 -0.001502   \n",
+       "14  0.001589  0.000957 -0.000179  ...  0.000704  0.000695 -0.001405 -0.001452   \n",
+       "\n",
+       "          94        95        96        97        98        99  \n",
+       "0  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "1  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "2  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "3  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "4   0.000550  0.000566 -0.000483  0.000996 -0.000238 -0.000483  \n",
+       "5  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "6   0.000148  0.001278 -0.000180 -0.000994 -0.000649  0.000605  \n",
+       "7  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "8   0.000148  0.001278 -0.000180 -0.000994 -0.000649  0.000605  \n",
+       "9  -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "10  0.000550  0.000566 -0.000483  0.000996 -0.000238 -0.000483  \n",
+       "11 -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "12  0.000550  0.000566 -0.000483  0.000996 -0.000238 -0.000483  \n",
+       "13 -0.000022  0.000610 -0.000278  0.001434  0.000241 -0.000719  \n",
+       "14  0.000550  0.000566 -0.000483  0.000996 -0.000238 -0.000483  \n",
+       "\n",
+       "[15 rows x 100 columns]"
+      ]
+     },
+     "execution_count": 30,
+     "metadata": {},
+     "output_type": "execute_result"
+    }
+   ],
+   "source": [
+    "model_fasttext = gensim.models.FastText(\n",
+    "    sentences,\n",
+    "    min_count=1,\n",
+    "    vector_size=100,\n",
+    "    window=5,\n",
+    "    min_n=3,\n",
+    "    max_n=6,\n",
+    "    epochs=10\n",
+    ")\n",
+    "model_fasttext.save('kalender_libur.fasttext')\n",
+    "model_fasttext = gensim.models.FastText.load('kalender_libur.fasttext')\n",
+    "\n",
+    "fastext = model_fasttext.wv\n",
+    "print(fastext.index_to_key)\n",
+    "print(fastext.vectors.shape)\n",
+    "print(fastext.similar_by_key('idul'))\n",
+    "\n",
+    "X_features_ft = np.array([get_document_vector(doc, model_fasttext) for doc in sentences])\n",
+    "pd.DataFrame(X_features_ft)"
+   ]
+  },
+  {
+   "cell_type": "code",
+   "execution_count": 31,
+   "id": "1b8e30f8",
+   "metadata": {},
+   "outputs": [
+    {
+     "name": "stderr",
+     "output_type": "stream",
+     "text": [
+      "\n",
+      "[notice] A new release of pip is available: 25.2 -> 26.2.1\n",
+      "[notice] To update, run: python.exe -m pip install --upgrade pip\n"
+     ]
+    },
+    {
+     "data": {
+      "application/vnd.plotly.v1+json": {
+       "config": {
+        "plotlyServerURL": "https://plot.ly"
+       },
+       "data": [
+        {
+         "hovertemplate": "umap1=%{x}<br>umap2=%{y}<br>word=%{text}<extra></extra>",
+         "legendgroup": "",
+         "marker": {
+          "color": "#636efa",
+          "symbol": "circle"
+         },
+         "mode": "markers+text",
+         "name": "",
+         "orientation": "v",
+         "showlegend": false,
+         "text": [
+          "idul",
+          "fitri",
+          "cuti",
+          "haji",
+          "lebaran",
+          "adha"
+         ],
+         "textposition": "top center",
+         "type": "scatter",
+         "x": {
+          "bdata": "sAq7wIDItcAYUevABKvPwFFnAsGIHvPA",
+          "dtype": "f4"
+         },
+         "xaxis": "x",
+         "y": {
+          "bdata": "/3X8QKfCB0HQYiBB2EgSQb+iGEEjqA5B",
+          "dtype": "f4"
+         },
+         "yaxis": "y"
+        }
+       ],
+       "layout": {
+        "height": 600,
+        "legend": {
+         "tracegroupgap": 0
+        },
+        "margin": {
+         "t": 60
+        },
+        "template": {
+         "data": {
+          "bar": [
+           {
+            "error_x": {
+             "color": "#2a3f5f"
+            },
+            "error_y": {
+             "color": "#2a3f5f"
+            },
+            "marker": {
+             "line": {
+              "color": "#E5ECF6",
+              "width": 0.5
+             },
+             "pattern": {
+              "fillmode": "overlay",
+              "size": 10,
+              "solidity": 0.2
+             }
+            },
+            "type": "bar"
+           }
+          ],
+          "barpolar": [
+           {
+            "marker": {
+             "line": {
+              "color": "#E5ECF6",
+              "width": 0.5
+             },
+             "pattern": {
+              "fillmode": "overlay",
+              "size": 10,
+              "solidity": 0.2
+             }
+            },
+            "type": "barpolar"
+           }
+          ],
+          "carpet": [
+           {
+            "aaxis": {
+             "endlinecolor": "#2a3f5f",
+             "gridcolor": "white",
+             "linecolor": "white",
+             "minorgridcolor": "white",
+             "startlinecolor": "#2a3f5f"
+            },
+            "baxis": {
+             "endlinecolor": "#2a3f5f",
+             "gridcolor": "white",
+             "linecolor": "white",
+             "minorgridcolor": "white",
+             "startlinecolor": "#2a3f5f"
+            },
+            "type": "carpet"
+           }
+          ],
+          "choropleth": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "type": "choropleth"
+           }
+          ],
+          "contour": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "colorscale": [
+             [
+              0,
+              "#0d0887"
+             ],
+             [
+              0.1111111111111111,
+              "#46039f"
+             ],
+             [
+              0.2222222222222222,
+              "#7201a8"
+             ],
+             [
+              0.3333333333333333,
+              "#9c179e"
+             ],
+             [
+              0.4444444444444444,
+              "#bd3786"
+             ],
+             [
+              0.5555555555555556,
+              "#d8576b"
+             ],
+             [
+              0.6666666666666666,
+              "#ed7953"
+             ],
+             [
+              0.7777777777777778,
+              "#fb9f3a"
+             ],
+             [
+              0.8888888888888888,
+              "#fdca26"
+             ],
+             [
+              1,
+              "#f0f921"
+             ]
+            ],
+            "type": "contour"
+           }
+          ],
+          "contourcarpet": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "type": "contourcarpet"
+           }
+          ],
+          "heatmap": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "colorscale": [
+             [
+              0,
+              "#0d0887"
+             ],
+             [
+              0.1111111111111111,
+              "#46039f"
+             ],
+             [
+              0.2222222222222222,
+              "#7201a8"
+             ],
+             [
+              0.3333333333333333,
+              "#9c179e"
+             ],
+             [
+              0.4444444444444444,
+              "#bd3786"
+             ],
+             [
+              0.5555555555555556,
+              "#d8576b"
+             ],
+             [
+              0.6666666666666666,
+              "#ed7953"
+             ],
+             [
+              0.7777777777777778,
+              "#fb9f3a"
+             ],
+             [
+              0.8888888888888888,
+              "#fdca26"
+             ],
+             [
+              1,
+              "#f0f921"
+             ]
+            ],
+            "type": "heatmap"
+           }
+          ],
+          "histogram": [
+           {
+            "marker": {
+             "pattern": {
+              "fillmode": "overlay",
+              "size": 10,
+              "solidity": 0.2
+             }
+            },
+            "type": "histogram"
+           }
+          ],
+          "histogram2d": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "colorscale": [
+             [
+              0,
+              "#0d0887"
+             ],
+             [
+              0.1111111111111111,
+              "#46039f"
+             ],
+             [
+              0.2222222222222222,
+              "#7201a8"
+             ],
+             [
+              0.3333333333333333,
+              "#9c179e"
+             ],
+             [
+              0.4444444444444444,
+              "#bd3786"
+             ],
+             [
+              0.5555555555555556,
+              "#d8576b"
+             ],
+             [
+              0.6666666666666666,
+              "#ed7953"
+             ],
+             [
+              0.7777777777777778,
+              "#fb9f3a"
+             ],
+             [
+              0.8888888888888888,
+              "#fdca26"
+             ],
+             [
+              1,
+              "#f0f921"
+             ]
+            ],
+            "type": "histogram2d"
+           }
+          ],
+          "histogram2dcontour": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "colorscale": [
+             [
+              0,
+              "#0d0887"
+             ],
+             [
+              0.1111111111111111,
+              "#46039f"
+             ],
+             [
+              0.2222222222222222,
+              "#7201a8"
+             ],
+             [
+              0.3333333333333333,
+              "#9c179e"
+             ],
+             [
+              0.4444444444444444,
+              "#bd3786"
+             ],
+             [
+              0.5555555555555556,
+              "#d8576b"
+             ],
+             [
+              0.6666666666666666,
+              "#ed7953"
+             ],
+             [
+              0.7777777777777778,
+              "#fb9f3a"
+             ],
+             [
+              0.8888888888888888,
+              "#fdca26"
+             ],
+             [
+              1,
+              "#f0f921"
+             ]
+            ],
+            "type": "histogram2dcontour"
+           }
+          ],
+          "mesh3d": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "type": "mesh3d"
+           }
+          ],
+          "parcoords": [
+           {
+            "line": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "parcoords"
+           }
+          ],
+          "pie": [
+           {
+            "automargin": true,
+            "type": "pie"
+           }
+          ],
+          "scatter": [
+           {
+            "fillpattern": {
+             "fillmode": "overlay",
+             "size": 10,
+             "solidity": 0.2
+            },
+            "type": "scatter"
+           }
+          ],
+          "scatter3d": [
+           {
+            "line": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scatter3d"
+           }
+          ],
+          "scattercarpet": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scattercarpet"
+           }
+          ],
+          "scattergeo": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scattergeo"
+           }
+          ],
+          "scattergl": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scattergl"
+           }
+          ],
+          "scattermap": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scattermap"
+           }
+          ],
+          "scattermapbox": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scattermapbox"
+           }
+          ],
+          "scatterpolar": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scatterpolar"
+           }
+          ],
+          "scatterpolargl": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scatterpolargl"
+           }
+          ],
+          "scatterternary": [
+           {
+            "marker": {
+             "colorbar": {
+              "outlinewidth": 0,
+              "ticks": ""
+             }
+            },
+            "type": "scatterternary"
+           }
+          ],
+          "surface": [
+           {
+            "colorbar": {
+             "outlinewidth": 0,
+             "ticks": ""
+            },
+            "colorscale": [
+             [
+              0,
+              "#0d0887"
+             ],
+             [
+              0.1111111111111111,
+              "#46039f"
+             ],
+             [
+              0.2222222222222222,
+              "#7201a8"
+             ],
+             [
+              0.3333333333333333,
+              "#9c179e"
+             ],
+             [
+              0.4444444444444444,
+              "#bd3786"
+             ],
+             [
+              0.5555555555555556,
+              "#d8576b"
+             ],
+             [
+              0.6666666666666666,
+              "#ed7953"
+             ],
+             [
+              0.7777777777777778,
+              "#fb9f3a"
+             ],
+             [
+              0.8888888888888888,
+              "#fdca26"
+             ],
+             [
+              1,
+              "#f0f921"
+             ]
+            ],
+            "type": "surface"
+           }
+          ],
+          "table": [
+           {
+            "cells": {
+             "fill": {
+              "color": "#EBF0F8"
+             },
+             "line": {
+              "color": "white"
+             }
+            },
+            "header": {
+             "fill": {
+              "color": "#C8D4E3"
+             },
+             "line": {
+              "color": "white"
+             }
+            },
+            "type": "table"
+           }
+          ]
+         },
+         "layout": {
+          "annotationdefaults": {
+           "arrowcolor": "#2a3f5f",
+           "arrowhead": 0,
+           "arrowwidth": 1
+          },
+          "autotypenumbers": "strict",
+          "coloraxis": {
+           "colorbar": {
+            "outlinewidth": 0,
+            "ticks": ""
+           }
+          },
+          "colorscale": {
+           "diverging": [
+            [
+             0,
+             "#8e0152"
+            ],
+            [
+             0.1,
+             "#c51b7d"
+            ],
+            [
+             0.2,
+             "#de77ae"
+            ],
+            [
+             0.3,
+             "#f1b6da"
+            ],
+            [
+             0.4,
+             "#fde0ef"
+            ],
+            [
+             0.5,
+             "#f7f7f7"
+            ],
+            [
+             0.6,
+             "#e6f5d0"
+            ],
+            [
+             0.7,
+             "#b8e186"
+            ],
+            [
+             0.8,
+             "#7fbc41"
+            ],
+            [
+             0.9,
+             "#4d9221"
+            ],
+            [
+             1,
+             "#276419"
+            ]
+           ],
+           "sequential": [
+            [
+             0,
+             "#0d0887"
+            ],
+            [
+             0.1111111111111111,
+             "#46039f"
+            ],
+            [
+             0.2222222222222222,
+             "#7201a8"
+            ],
+            [
+             0.3333333333333333,
+             "#9c179e"
+            ],
+            [
+             0.4444444444444444,
+             "#bd3786"
+            ],
+            [
+             0.5555555555555556,
+             "#d8576b"
+            ],
+            [
+             0.6666666666666666,
+             "#ed7953"
+            ],
+            [
+             0.7777777777777778,
+             "#fb9f3a"
+            ],
+            [
+             0.8888888888888888,
+             "#fdca26"
+            ],
+            [
+             1,
+             "#f0f921"
+            ]
+           ],
+           "sequentialminus": [
+            [
+             0,
+             "#0d0887"
+            ],
+            [
+             0.1111111111111111,
+             "#46039f"
+            ],
+            [
+             0.2222222222222222,
+             "#7201a8"
+            ],
+            [
+             0.3333333333333333,
+             "#9c179e"
+            ],
+            [
+             0.4444444444444444,
+             "#bd3786"
+            ],
+            [
+             0.5555555555555556,
+             "#d8576b"
+            ],
+            [
+             0.6666666666666666,
+             "#ed7953"
+            ],
+            [
+             0.7777777777777778,
+             "#fb9f3a"
+            ],
+            [
+             0.8888888888888888,
+             "#fdca26"
+            ],
+            [
+             1,
+             "#f0f921"
+            ]
+           ]
+          },
+          "colorway": [
+           "#636efa",
+           "#EF553B",
+           "#00cc96",
+           "#ab63fa",
+           "#FFA15A",
+           "#19d3f3",
+           "#FF6692",
+           "#B6E880",
+           "#FF97FF",
+           "#FECB52"
+          ],
+          "font": {
+           "color": "#2a3f5f"
+          },
+          "geo": {
+           "bgcolor": "white",
+           "lakecolor": "white",
+           "landcolor": "#E5ECF6",
+           "showlakes": true,
+           "showland": true,
+           "subunitcolor": "white"
+          },
+          "hoverlabel": {
+           "align": "left"
+          },
+          "hovermode": "closest",
+          "mapbox": {
+           "style": "light"
+          },
+          "paper_bgcolor": "white",
+          "plot_bgcolor": "#E5ECF6",
+          "polar": {
+           "angularaxis": {
+            "gridcolor": "white",
+            "linecolor": "white",
+            "ticks": ""
+           },
+           "bgcolor": "#E5ECF6",
+           "radialaxis": {
+            "gridcolor": "white",
+            "linecolor": "white",
+            "ticks": ""
+           }
+          },
+          "scene": {
+           "xaxis": {
+            "backgroundcolor": "#E5ECF6",
+            "gridcolor": "white",
+            "gridwidth": 2,
+            "linecolor": "white",
+            "showbackground": true,
+            "ticks": "",
+            "zerolinecolor": "white"
+           },
+           "yaxis": {
+            "backgroundcolor": "#E5ECF6",
+            "gridcolor": "white",
+            "gridwidth": 2,
+            "linecolor": "white",
+            "showbackground": true,
+            "ticks": "",
+            "zerolinecolor": "white"
+           },
+           "zaxis": {
+            "backgroundcolor": "#E5ECF6",
+            "gridcolor": "white",
+            "gridwidth": 2,
+            "linecolor": "white",
+            "showbackground": true,
+            "ticks": "",
+            "zerolinecolor": "white"
+           }
+          },
+          "shapedefaults": {
+           "line": {
+            "color": "#2a3f5f"
+           }
+          },
+          "ternary": {
+           "aaxis": {
+            "gridcolor": "white",
+            "linecolor": "white",
+            "ticks": ""
+           },
+           "baxis": {
+            "gridcolor": "white",
+            "linecolor": "white",
+            "ticks": ""
+           },
+           "bgcolor": "#E5ECF6",
+           "caxis": {
+            "gridcolor": "white",
+            "linecolor": "white",
+            "ticks": ""
+           }
+          },
+          "title": {
+           "x": 0.05
+          },
+          "xaxis": {
+           "automargin": true,
+           "gridcolor": "white",
+           "linecolor": "white",
+           "ticks": "",
+           "title": {
+            "standoff": 15
+           },
+           "zerolinecolor": "white",
+           "zerolinewidth": 2
+          },
+          "yaxis": {
+           "automargin": true,
+           "gridcolor": "white",
+           "linecolor": "white",
+           "ticks": "",
+           "title": {
+            "standoff": 15
+           },
+           "zerolinecolor": "white",
+           "zerolinewidth": 2
+          }
+         }
+        },
+        "title": {
+         "text": "Word2Vec Visualization"
+        },
+        "xaxis": {
+         "anchor": "y",
+         "domain": [
+          0,
+          1
+         ],
+         "title": {
+          "text": "umap1"
+         }
+        },
+        "yaxis": {
+         "anchor": "x",
+         "domain": [
+          0,
+          1
+         ],
+         "title": {
+          "text": "umap2"
+         }
+        }
+       }
+      }
+     },
+     "metadata": {},
+     "output_type": "display_data"
+    }
+   ],
+   "source": [
+    "!pip install umap-learn -q\n",
+    "from umap import UMAP\n",
+    "import plotly.express as px\n",
+    "\n",
+    "X = UMAP(n_neighbors=3).fit_transform(w2v.vectors)   # n_neighbors dikecilkan karena vocab cuma 6\n",
+    "df2 = pd.DataFrame(X, columns=['umap1', 'umap2'])\n",
+    "df2['word'] = w2v.index_to_key\n",
+    "\n",
+    "fig = px.scatter(df2, x='umap1', y='umap2', text='word')\n",
+    "fig.update_traces(textposition='top center')\n",
+    "fig.update_layout(height=600, title_text='Word2Vec Visualization')\n",
+    "fig.show()"
+   ]
+  }
+ ],
+ "metadata": {
+  "kernelspec": {
+   "display_name": "Python 3",
+   "language": "python",
+   "name": "python3"
+  },
+  "language_info": {
+   "codemirror_mode": {
+    "name": "ipython",
+    "version": 3
+   },
+   "file_extension": ".py",
+   "mimetype": "text/x-python",
+   "name": "python",
+   "nbconvert_exporter": "python",
+   "pygments_lexer": "ipython3",
+   "version": "3.13.7"
+  }
+ },
+ "nbformat": 4,
+ "nbformat_minor": 5
+}
